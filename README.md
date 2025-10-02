@@ -57,8 +57,26 @@ build.bat
 - Completar datos del operador
 - Elegir entre "Iniciar Checklist" o "NP (No Produce)"
 
-### 2. Formulario Screen Printer
-El sistema incluye 8 verificaciones paso a paso con validaciones específicas.
+### 2. Formularios Disponibles
+
+#### Screen Printer (Yamaha/DEK)
+El sistema incluye 8 verificaciones paso a paso:
+- Limpieza exterior, depósito condensación, sensor seguridad
+- Presión aire (Mpa), temperatura (°C), inspección visual
+
+#### Squeeguee Cleaner  
+Checklist con 5 verificaciones diarias (todas visuales):
+1. Limpieza de la parte frontal del equipo
+2. Funcionamiento correcto de las torretas  
+3. Válvula para desagüe cerrada
+4. Funcionamiento del paro de emergencia
+5. Área de trabajo libre de obstrucciones
+
+### 3. Checklists Implementados
+- ✅ **Screen Printer (Yamaha)** - 8 elementos
+- ✅ **Screen Printer (DEK)** - 8 elementos  
+- ✅ **Squeeguee Cleaner** - 5 elementos (todas inspecciones visuales)
+- 🚧 **Otros equipos** - En desarrollo
 
 ## Tecnologías
 

@@ -89,8 +89,15 @@ function ChecklistForm() {
   const siguienteItem = () => {
     if (currentCheckIndex < checklist.length - 1) {
       setCurrentCheckIndex(currentCheckIndex + 1);
-    } else {
-      // Último item, guardar checklist
+    } else if (currentCheckIndex === checklist.length - 1) {
+      // Si estamos en el último item, avanzar a observaciones
+      setCurrentCheckIndex(checklist.length);
+    } else if (currentCheckIndex === checklist.length) {
+      // En la pantalla de observaciones: validar y guardar
+      if (esNoProductivo && (!formData.observaciones || !formData.observaciones.trim())) {
+        alert('Por favor ingresa observaciones que expliquen por qué es NP');
+        return;
+      }
       guardarChecklist();
     }
   };
@@ -98,6 +105,9 @@ function ChecklistForm() {
   const anteriorItem = () => {
     if (currentCheckIndex > 0) {
       setCurrentCheckIndex(currentCheckIndex - 1);
+    } else if (currentCheckIndex === checklist.length) {
+      // volver desde observaciones al último check
+      setCurrentCheckIndex(checklist.length - 1);
     }
   };
 
@@ -243,18 +253,7 @@ function ChecklistForm() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Observaciones (Opcional)
-              </label>
-              <textarea
-                value={formData.observaciones}
-                onChange={(e) => setFormData({...formData, observaciones: e.target.value})}
-                className="input-field"
-                rows={3}
-                placeholder="Observaciones adicionales"
-              />
-            </div>
+            {/* Observaciones se mostrará al final del checklist si es necesario */}
 
             {/* Botones de acción */}
             <div className="flex gap-4 pt-4">
@@ -267,7 +266,14 @@ function ChecklistForm() {
               </button>
               
               <button
-                onClick={manejarNoProductivo}
+                onClick={() => {
+                  if (!selectedLinea || !selectedEquipo || !formData.turno || !formData.empleado) return;
+                  // marcar NP y abrir formulario en la sección de observaciones
+                  setEsNoProductivo(true);
+                  setStep('formulario');
+                  // posicionar en el índice que representa 'observaciones' (después del último item)
+                  setCurrentCheckIndex(checklist.length);
+                }}
                 disabled={!selectedLinea || !selectedEquipo || !formData.turno || !formData.empleado || loading}
                 className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -282,6 +288,29 @@ function ChecklistForm() {
 
   // Render del formulario paso a paso
   if (step === 'formulario' && checklist.length > 0) {
+    // Observaciones se muestra como paso final con índice == checklist.length
+    if (currentCheckIndex === checklist.length) {
+      return (
+        <div className="max-w-3xl mx-auto">
+          <div className="card">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Observaciones</h2>
+            <p className="text-gray-600 mb-4">Agrega una explicación si marcaste NP (obligatorio en ese caso). Si no es NP, puedes dejarlo vacío.</p>
+            <textarea
+              value={formData.observaciones}
+              onChange={(e) => setFormData({...formData, observaciones: e.target.value})}
+              className="input-field mb-4"
+              rows={6}
+              placeholder={esNoProductivo ? 'Describe la razón por la cual el proceso es No Productivo' : 'Observaciones adicionales (opcional)'}
+            />
+            <div className="flex justify-between">
+              <button onClick={anteriorItem} className="btn-secondary">← Anterior</button>
+              <button onClick={siguienteItem} className="btn-primary">Finalizar y Guardar</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     const currentCheck = checklist[currentCheckIndex];
     const currentResponse = respuestas[currentCheck.id];
 
